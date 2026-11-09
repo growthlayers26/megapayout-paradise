@@ -186,15 +186,17 @@
   .foot-bottom p { margin: 4px 0; }
 
   .nav-actions { display: flex; gap: 8px; align-items: center; }
+  [hidden] { display: none !important; }
+  .nav-actions .btn, .brand { white-space: nowrap; }
 
   /* Top up panel */
-  dialog#topup {
+  dialog#topup, dialog#signin {
     width: min(440px, calc(100vw - 32px)); max-height: calc(100vh - 32px); overflow: auto;
     padding: 24px; border: 1px solid var(--line-strong); border-radius: 18px;
     background: var(--surface); color: var(--text);
   }
-  dialog#topup::backdrop { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(2px); }
-  dialog#topup h2 { font-size: 24px; margin-bottom: 8px; }
+  dialog#topup::backdrop, dialog#signin::backdrop { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(2px); }
+  dialog#topup h2, dialog#signin h2 { font-size: 24px; margin-bottom: 8px; }
   .topup-close-row { display: flex; justify-content: flex-end; margin: -8px -8px 0 0; }
   .topup-x {
     width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: transparent;
@@ -230,6 +232,27 @@
   .topup-msg { width: 100%; }
   .topup-note { margin: 14px 0 0; text-align: center; color: var(--muted); font-size: 12px; }
 
+  /* Sign-in panel */
+  .who { display: none; align-items: center; gap: 8px; max-width: 160px; }
+  .who img { width: 22px; height: 22px; border-radius: 50%; flex: none; }
+  .who span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .is-signed-in .who { display: inline-flex; }
+  .is-signed-in .signin-label { display: none; }
+  .gsi-box { display: flex; justify-content: center; min-height: 44px; margin: 4px 0 18px; }
+  .signin-state[hidden], .signin-out[hidden], .inapp[hidden] { display: none; }
+  .inapp { border: 1px solid var(--line-strong); border-radius: 12px; background: var(--surface-2); padding: 16px; margin-bottom: 16px; font-size: 14px; }
+  .inapp p { margin: 0 0 10px; }
+  .inapp .btn { width: 100%; }
+  .signin-msg { min-height: 20px; margin: 0; text-align: center; font-size: 14px; color: var(--muted); }
+  .signin-msg.is-error { color: #ff8a80; }
+  .link-btn { background: none; border: 0; padding: 0; color: var(--muted); font: inherit; text-decoration: underline; cursor: pointer; }
+  .link-btn:hover { color: var(--text); }
+  .account-row { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--surface-2); margin-bottom: 16px; }
+  .account-row img { width: 40px; height: 40px; border-radius: 50%; }
+  .account-row strong { display: block; }
+  .account-row small { color: var(--muted); word-break: break-all; }
+  .signin-actions { display: grid; gap: 10px; }
+
   /* Mobile sticky CTA */
   .mobile-cta { display: none; }
 
@@ -237,6 +260,7 @@
     .games { grid-template-columns: repeat(2, 1fr); }
     .policies { grid-template-columns: 1fr; }
     .foot-grid { grid-template-columns: 1fr 1fr; }
+    .nav-links { display: none; }
   }
   @media (max-width: 760px) {
     section { padding: 64px 0; }
@@ -275,6 +299,10 @@
     </nav>
     <div class="nav-actions">
       <a class="btn btn-ghost btn-sm nav-msg" data-message href="#">Message us</a>
+      <button class="btn btn-ghost btn-sm nav-msg" type="button" data-signin hidden>
+        <span class="signin-label">Sign in</span>
+        <span class="who"><img alt="" data-who-img hidden><span data-who-name></span></span>
+      </button>
       <button class="btn btn-primary btn-sm" type="button" data-topup>Top up</button>
     </div>
   </div>
@@ -301,6 +329,37 @@
   </div>
   <a class="btn btn-ghost topup-msg" data-message href="#">Paid? Message us to load it</a>
   <p class="topup-note">18+ only. Entertainment only — play within your limits.</p>
+</dialog>
+
+<dialog id="signin" aria-labelledby="signin-title">
+  <form method="dialog" class="topup-close-row">
+    <button class="topup-x" aria-label="Close">×</button>
+  </form>
+  <div class="signin-out">
+    <p class="eyebrow">Sign in</p>
+    <h2 id="signin-title">Sign in to chat with us</h2>
+    <p class="topup-lead">Sign in once with Google. Your chat and its history stay with you on your phone, computer or any browser.</p>
+    <div class="inapp" hidden>
+      <p>Google sign-in doesn't work inside the Facebook or Instagram app. Tap <strong>•••</strong> and choose <strong>Open in browser</strong>, then sign in there.</p>
+      <button class="btn btn-ghost btn-sm" type="button" data-copy-link>Copy link</button>
+      <p style="margin:12px 0 0"><button class="link-btn" type="button" data-skip-signin>Chat here without signing in</button><br><small style="color:var(--muted)">Your history will stay on this phone's Facebook browser only.</small></p>
+    </div>
+    <div class="gsi-box" id="gsi-button"></div>
+  </div>
+  <div class="signin-state" hidden>
+    <p class="eyebrow">Signed in</p>
+    <h2>Your account</h2>
+    <div class="account-row">
+      <img alt="" data-acct-img hidden>
+      <div><strong data-acct-name></strong><small data-acct-email></small></div>
+    </div>
+    <div class="signin-actions">
+      <a class="btn btn-primary" data-message href="#">Open my chat</a>
+      <button class="btn btn-ghost" type="button" data-signout>Sign out</button>
+    </div>
+  </div>
+  <p class="signin-msg" role="status" aria-live="polite"></p>
+  <p class="topup-note">18+ only. We use your Google name and email only to keep your chat history.</p>
 </dialog>
 
 <main>
@@ -499,6 +558,7 @@
           <li><a href="#faq">FAQ</a></li>
           <li><a data-message href="#">Message us</a></li>
           <li><a data-facebook href="#" target="_blank" rel="noopener noreferrer">Facebook</a></li>
+          <li><a href="#" data-signin-link hidden>Sign in</a></li>
         </ul>
       </div>
       <div>
@@ -529,6 +589,11 @@
   // An empty link shows that option as "Soon".
   var PAYPAL_URL = "https://www.paypal.com/ncp/payment/ER8BUFNE2TFGQ";
   var STRIPE_URL = "https://buy.stripe.com/5kQ00k5vz9F13HJ72a6g805";
+  // GOOGLE_CLIENT_ID: the Mega Payout Paradise Google sign-in client ID. When set, players sign in
+  // with Google before chatting, so their chat and its history follow them to any device.
+  // Leave empty to keep the chat open to everyone (history then stays in that one browser).
+  var GOOGLE_CLIENT_ID = "";
+  var AUTH_URL = CHAT_URL + "/mpp-auth/google";
   // ======================
 
   // Top up panel
@@ -550,14 +615,181 @@
     a.target = "_blank";
     a.rel = "noopener noreferrer";
     // When the on-site chat is ready, "Message us" opens it instead of leaving the page.
+    // With sign-in on, players sign in first so they always land back in their own chat.
     a.addEventListener("click", function (e) {
-      if (window.$chatwoot && window.chatReady) {
-        e.preventDefault();
-        window.$chatwoot.toggle("open");
-      }
+      if (!CHAT_TOKEN) return;
+      if (needsSignin() || window.chatReady) { e.preventDefault(); openChat(); }
+      // Otherwise the chat hasn't loaded (slow or blocked): the link opens Messenger instead.
     });
   });
   document.getElementById("year").textContent = new Date().getFullYear();
+
+  // ===== Player sign-in + chat identity =====
+  // A signed-in player is identified to the chat by a stable ID plus a hash that only our
+  // server can make (see chatwoot-server/auth). The chat then reopens that player's own
+  // conversation, with its history, on any device. The hash is stored in this browser so
+  // the player stays signed in.
+  var SIGNIN_ON = !!(CHAT_TOKEN && GOOGLE_CLIENT_ID);
+  var ID_KEY = "mpp_chat_identity";
+  var SKIP_KEY = "mpp_chat_skip_signin";
+  var signin = document.getElementById("signin");
+  var signinMsg = signin.querySelector(".signin-msg");
+  var openChatAfterSignin = false;
+  var identityApplied = false;
+
+  function store(get, key, val) {
+    try {
+      if (get) return localStorage.getItem(key);
+      if (val === null) localStorage.removeItem(key); else localStorage.setItem(key, val);
+    } catch (e) { return null; }
+  }
+  function getIdentity() {
+    try { return JSON.parse(store(true, ID_KEY) || "null"); } catch (e) { return null; }
+  }
+  // Google refuses sign-in inside the Facebook / Instagram in-app browsers.
+  function isInAppBrowser() {
+    return /(FBAN|FBAV|FB_IAB|FBIOS|Instagram|MicroMessenger|Snapchat)|Line\//i.test(navigator.userAgent || "");
+  }
+  function say(text, isError) {
+    signinMsg.textContent = text || "";
+    signinMsg.classList.toggle("is-error", !!isError);
+  }
+
+  function renderAccount() {
+    var id = getIdentity();
+    var signedIn = !!id;
+    document.querySelectorAll("[data-signin]").forEach(function (b) {
+      b.hidden = !SIGNIN_ON;
+      b.classList.toggle("is-signed-in", signedIn);
+      b.setAttribute("aria-label", signedIn ? "Your account" : "Sign in");
+    });
+    document.querySelectorAll("[data-signin-link]").forEach(function (a) {
+      a.hidden = !SIGNIN_ON;
+      a.textContent = signedIn ? "Your account" : "Sign in";
+    });
+    document.querySelectorAll("[data-who-name]").forEach(function (el) {
+      el.textContent = signedIn ? (id.name || id.email || "Signed in").split(" ")[0] : "";
+    });
+    document.querySelectorAll("[data-who-img], [data-acct-img]").forEach(function (img) {
+      if (signedIn && id.avatar_url) { img.src = id.avatar_url; img.hidden = false; } else { img.hidden = true; }
+    });
+    signin.querySelector("[data-acct-name]").textContent = signedIn ? (id.name || "Player") : "";
+    signin.querySelector("[data-acct-email]").textContent = signedIn ? (id.email || "") : "";
+    signin.querySelector(".signin-out").hidden = signedIn;
+    signin.querySelector(".signin-state").hidden = !signedIn;
+  }
+
+  function applyIdentity() {
+    var id = getIdentity();
+    if (!id || !window.chatReady || identityApplied) return;
+    identityApplied = true;
+    window.$chatwoot.setUser(id.identifier, {
+      name: id.name || undefined,
+      email: id.email || undefined,
+      avatar_url: id.avatar_url || undefined,
+      identifier_hash: id.identifier_hash
+    });
+  }
+
+  function needsSignin() { return SIGNIN_ON && !getIdentity() && !store(true, SKIP_KEY); }
+  function openChat() {
+    if (needsSignin()) {
+      openChatAfterSignin = true;
+      openSignin();
+      return;
+    }
+    if (window.$chatwoot && window.chatReady) {
+      applyIdentity();
+      window.$chatwoot.toggle("open");
+    } else {
+      // Chat still loading: open it as soon as it is ready.
+      window.openChatWhenReady = true;
+    }
+  }
+
+  var gsiLoading = false;
+  function renderGoogleButton() {
+    var box = document.getElementById("gsi-button");
+    if (!window.google || !google.accounts || !google.accounts.id) return false;
+    var width = Math.max(200, Math.min(360, Math.floor(box.clientWidth || 300)));
+    box.innerHTML = "";
+    google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: onGoogleCredential, ux_mode: "popup" });
+    google.accounts.id.renderButton(box, { type: "standard", theme: "filled_black", size: "large", shape: "pill", text: "continue_with", locale: "en", width: width });
+    return true;
+  }
+  function loadGoogle() {
+    if (renderGoogleButton() || gsiLoading) return;
+    gsiLoading = true;
+    var g = document.createElement("script");
+    g.src = "https://accounts.google.com/gsi/client";
+    g.async = true;
+    g.onload = function () { renderGoogleButton(); };
+    g.onerror = function () { gsiLoading = false; say("Google sign-in couldn't load. Check your connection and try again.", true); };
+    document.head.appendChild(g);
+  }
+
+  function onGoogleCredential(resp) {
+    say("Signing you in…");
+    fetch(AUTH_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ credential: resp.credential })
+    })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (id) {
+        store(false, ID_KEY, JSON.stringify(id));
+        store(false, SKIP_KEY, null);
+        identityApplied = false;
+        renderAccount();
+        say("");
+        applyIdentity();
+        if (openChatAfterSignin) {
+          openChatAfterSignin = false;
+          signin.close();
+          openChat();
+        }
+      })
+      .catch(function () { say("We couldn't sign you in. Please try again, or message us on Facebook.", true); });
+  }
+
+  function openSignin() {
+    say("");
+    renderAccount();
+    var inApp = isInAppBrowser() && !getIdentity();
+    signin.querySelector(".inapp").hidden = !inApp;
+    document.getElementById("gsi-button").hidden = inApp;
+    signin.showModal();
+    if (!inApp && !getIdentity()) loadGoogle();
+  }
+
+  document.querySelectorAll("[data-signin], [data-signin-link]").forEach(function (b) {
+    b.addEventListener("click", function (e) { e.preventDefault(); openChatAfterSignin = false; openSignin(); });
+  });
+  signin.addEventListener("click", function (e) { if (e.target === signin) signin.close(); });
+  signin.addEventListener("close", function () { openChatAfterSignin = false; });
+  signin.querySelectorAll("[data-message]").forEach(function (a) { a.addEventListener("click", function () { signin.close(); }); });
+  signin.querySelector("[data-signout]").addEventListener("click", function () {
+    store(false, ID_KEY, null);
+    identityApplied = false;
+    if (window.google && google.accounts && google.accounts.id) google.accounts.id.disableAutoSelect();
+    // Forget this player's chat in this browser, so the next person here starts fresh.
+    if (window.$chatwoot) window.$chatwoot.reset();
+    renderAccount();
+    say("You're signed out.");
+    loadGoogle();
+  });
+  signin.querySelector("[data-skip-signin]").addEventListener("click", function () {
+    store(false, SKIP_KEY, "1");
+    signin.close();
+    openChat();
+  });
+  signin.querySelector("[data-copy-link]").addEventListener("click", function () {
+    var btn = this;
+    (navigator.clipboard ? navigator.clipboard.writeText(location.href) : Promise.reject())
+      .then(function () { btn.textContent = "Link copied"; setTimeout(function () { btn.textContent = "Copy link"; }, 2500); })
+      .catch(function () { say("Copy this link: " + location.href); });
+  });
+  renderAccount();
 
   // Chatwoot live chat (self-hosted)
   if (CHAT_TOKEN) {
@@ -565,10 +797,15 @@
       position: "right",
       type: "standard",
       launcherTitle: "Chat with us",
-      // On phones the sticky "Message us" bar opens the chat, so hide the extra bubble.
-      hideMessageBubble: window.matchMedia("(max-width: 760px)").matches
+      // With sign-in on, the chat opens only from our buttons (so players sign in first).
+      // Otherwise phones use the sticky "Message us" bar, so the extra bubble is hidden there.
+      hideMessageBubble: SIGNIN_ON || window.matchMedia("(max-width: 760px)").matches
     };
-    window.addEventListener("chatwoot:ready", function () { window.chatReady = true; });
+    window.addEventListener("chatwoot:ready", function () {
+      window.chatReady = true;
+      applyIdentity();
+      if (window.openChatWhenReady) { window.openChatWhenReady = false; openChat(); }
+    });
     var s = document.createElement("script");
     s.src = CHAT_URL + "/packs/js/sdk.js";
     s.async = true;
