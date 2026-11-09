@@ -78,6 +78,10 @@
   .nav-links { display: flex; gap: 28px; font-size: 14px; }
   .nav-links a { text-decoration: none; color: var(--muted); }
   .nav-links a:hover { color: var(--text); }
+  .nav-links a.is-active { color: var(--gold); }
+
+  /* Phone/tablet section row (the header links are hidden at these widths) */
+  .chips { display: none; }
 
   /* Hero */
   .hero { padding: 72px 0 88px; border-top: 0; }
@@ -310,6 +314,36 @@
     box-shadow: 0 10px 30px rgba(0,0,0,.4);
   }
 
+  /* Reviews */
+  .rev-summary { display: flex; align-items: center; gap: 14px; margin-top: 8px; }
+  .rev-summary strong { font: 700 44px/1 Poppins, sans-serif; }
+  .rev-summary small { display: block; color: var(--muted); font-size: 14px; }
+  .stars-row { color: var(--gold); letter-spacing: 2px; font-size: 18px; }
+  .reviews { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
+  .review { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; display: flex; flex-direction: column; gap: 10px; }
+  .review-head { display: flex; align-items: center; gap: 10px; }
+  .review-head img, .review-head .avatar { width: 38px; height: 38px; border-radius: 50%; flex: none; object-fit: cover; }
+  .review-head .avatar { display: grid; place-items: center; background: var(--surface-2); border: 1px solid var(--line-strong); font: 600 15px Poppins, sans-serif; color: var(--gold); }
+  .review-head strong { display: block; font-size: 15px; }
+  .verified { color: var(--teal); font-size: 12px; font-weight: 600; }
+  .review p { margin: 0; color: #cfd8d6; font-size: 15px; }
+  .review time { color: var(--muted); font-size: 12px; margin-top: auto; }
+  .rev-empty { color: var(--muted); grid-column: 1 / -1; padding: 22px; border: 1px dashed var(--line-strong); border-radius: var(--radius); text-align: center; margin: 0; }
+  .rev-more { margin-bottom: 28px; }
+  .rev-form { max-width: 640px; background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 24px; }
+  .rev-form h3 { font-size: 20px; margin-bottom: 6px; }
+  .rev-form > p { color: var(--muted); margin: 0 0 16px; font-size: 15px; }
+  .star-pick { display: inline-flex; flex-direction: row-reverse; gap: 4px; border: 0; padding: 0; margin: 0 0 14px; }
+  .star-pick input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .star-pick label { font-size: 32px; line-height: 1; color: var(--line-strong); cursor: pointer; transition: color .1s; }
+  .star-pick input:checked ~ label, .star-pick label:hover, .star-pick label:hover ~ label { color: var(--gold); }
+  .star-pick input:focus-visible + label { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
+  .rev-form textarea { width: 100%; min-height: 110px; padding: 12px; border-radius: 10px; border: 1px solid var(--line-strong); background: var(--surface-2); color: var(--text); font: 15px/1.5 Inter, sans-serif; resize: vertical; margin-bottom: 6px; }
+  .rev-form textarea:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+  .rev-count { color: var(--muted); font-size: 12px; text-align: right; margin: 0 0 12px; }
+  .rev-status { min-height: 20px; margin: 10px 0 0; font-size: 14px; color: var(--muted); }
+  .rev-status.is-error { color: #ff8a80; }
+
   /* Mobile sticky CTA */
   .mobile-cta { display: none; }
 
@@ -317,9 +351,21 @@
     .games { grid-template-columns: repeat(2, 1fr); }
     .policies { grid-template-columns: 1fr; }
     .promo { grid-column: span 6; }
+    .reviews { grid-template-columns: 1fr 1fr; }
     .promo.wide { grid-template-columns: 1fr; }
     .foot-grid { grid-template-columns: 1fr 1fr; }
     .nav-links { display: none; }
+    html { scroll-padding-top: 118px; }
+    .chips {
+      display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+      padding: 0 20px 10px; margin: 0 auto; max-width: var(--max);
+    }
+    .chips::-webkit-scrollbar { display: none; }
+    .chips a {
+      flex: none; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line-strong);
+      color: var(--muted); font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap;
+    }
+    .chips a.is-active { color: var(--gold-ink); background: var(--gold); border-color: var(--gold); }
   }
   @media (max-width: 760px) {
     section { padding: 64px 0; }
@@ -333,6 +379,8 @@
     .games { grid-template-columns: 1fr; }
     .foot-grid { grid-template-columns: 1fr; }
     .promo, .promo.wide { padding: 20px; }
+    .reviews { grid-template-columns: 1fr; }
+    .rev-form { padding: 20px; }
     .streak { gap: 4px; }
     .streak li { padding: 8px 0; }
     .streak b { font-size: 12px; }
@@ -362,6 +410,7 @@
       <a href="#promotions">Promotions</a>
       <a href="#how-it-works">How it works</a>
       <a href="#games">Games</a>
+      <a href="#reviews">Reviews</a>
       <a href="#policies">Policies</a>
       <a href="#faq">FAQ</a>
     </nav>
@@ -374,6 +423,14 @@
       <button class="btn btn-primary btn-sm" type="button" data-topup>Top up</button>
     </div>
   </div>
+  <nav class="chips" aria-label="Sections">
+    <a href="#promotions">🎁 Promotions</a>
+    <a href="#games">Games</a>
+    <a href="#reviews">⭐ Reviews</a>
+    <a href="#how-it-works">How it works</a>
+    <a href="#policies">Policies</a>
+    <a href="#faq">FAQ</a>
+  </nav>
 </header>
 
 <div class="ticker" aria-label="Current promotions">
@@ -618,6 +675,47 @@
       </div>
       <p class="fine">Accounts are set up by our team, not self-serve — message us after you download and we'll get you playing.</p>
       <a class="btn btn-primary" data-message href="#">Message us to get set up</a>
+    </div>
+  </section>
+
+  <!-- Reviews -->
+  <section id="reviews">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Player reviews</p>
+        <h2>What players say</h2>
+        <p class="lead">Every review comes from a real player who signed in with Google. We show the good and the not-so-good.</p>
+        <div class="rev-summary" data-rev-summary hidden>
+          <strong data-rev-avg></strong>
+          <div><span class="stars-row" data-rev-stars></span><small data-rev-total></small></div>
+        </div>
+      </div>
+      <div class="reviews" data-rev-list>
+        <p class="rev-empty">No reviews yet — be the first to share how it went.</p>
+      </div>
+      <button class="btn btn-ghost btn-sm rev-more" type="button" data-rev-more hidden>Show more reviews</button>
+
+      <div class="rev-form" id="write-review">
+        <h3>Leave a review</h3>
+        <p data-rev-intro>Played with us? Tell other players how it went. Reviews appear after our team checks them.</p>
+        <div data-rev-out hidden>
+          <button class="btn btn-primary btn-sm" type="button" data-rev-signin>Sign in with Google to review</button>
+        </div>
+        <form data-rev-form hidden novalidate>
+          <fieldset class="star-pick" aria-label="Your rating">
+            <input type="radio" id="rs5" name="rating" value="5"><label for="rs5" title="5 stars">★</label>
+            <input type="radio" id="rs4" name="rating" value="4"><label for="rs4" title="4 stars">★</label>
+            <input type="radio" id="rs3" name="rating" value="3"><label for="rs3" title="3 stars">★</label>
+            <input type="radio" id="rs2" name="rating" value="2"><label for="rs2" title="2 stars">★</label>
+            <input type="radio" id="rs1" name="rating" value="1"><label for="rs1" title="1 star">★</label>
+          </fieldset>
+          <label class="sr-only" for="rev-text">Your review</label>
+          <textarea id="rev-text" name="text" maxlength="600" placeholder="How were the games, the deposits and the cashouts?"></textarea>
+          <p class="rev-count"><span data-rev-chars>0</span>/600</p>
+          <button class="btn btn-primary btn-sm" type="submit">Post review</button>
+        </form>
+        <p class="rev-status" role="status" aria-live="polite"></p>
+      </div>
     </div>
   </section>
 
@@ -926,6 +1024,7 @@
         identityApplied = false;
         renderAccount();
         renderReferral();
+        renderReviewForm();
         say("");
         applyIdentity();
         if (openChatAfterSignin) {
@@ -961,6 +1060,7 @@
     if (window.$chatwoot) window.$chatwoot.reset();
     renderAccount();
     renderReferral();
+    renderReviewForm();
     say("You're signed out.");
     loadGoogle();
   });
@@ -976,6 +1076,134 @@
       .catch(function () { say("Copy this link: " + location.href); });
   });
   renderAccount();
+
+  // ===== Section highlighting (header links + phone section row) =====
+  (function () {
+    var links = document.querySelectorAll('.nav-links a[href^="#"], .chips a');
+    var chipsRow = document.querySelector(".chips");
+    var sections = [];
+    links.forEach(function (a) {
+      var sec = document.querySelector(a.getAttribute("href"));
+      if (sec && sections.indexOf(sec) < 0) sections.push(sec);
+    });
+    if (!("IntersectionObserver" in window) || !sections.length) return;
+    function setActive(id) {
+      links.forEach(function (a) {
+        var on = a.getAttribute("href") === "#" + id;
+        a.classList.toggle("is-active", on);
+        if (on) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current");
+        // Keep the active chip visible in the sideways-scrolling row.
+        if (on && a.parentNode === chipsRow && chipsRow.scrollWidth > chipsRow.clientWidth) {
+          chipsRow.scrollTo({ left: a.offsetLeft - 20, behavior: "smooth" });
+        }
+      });
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) setActive(en.target.id); });
+      // Back above the first section (hero): nothing is highlighted.
+      if (window.scrollY < sections[0].offsetTop - window.innerHeight * 0.5) setActive(null);
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    sections.forEach(function (sec) { io.observe(sec); });
+  })();
+
+  // ===== Player reviews =====
+  // Reviews live on our chat server (chatwoot-server/auth). Only signed-in players can post,
+  // one each, and nothing shows until staff approve it at /mpp-auth/admin.
+  var REVIEWS_URL = CHAT_URL + "/mpp-auth/reviews";
+  var revList = document.querySelector("[data-rev-list]");
+  var revStatus = document.querySelector(".rev-status");
+  var allReviews = [], revShown = 6;
+
+  function starText(n) { return "★★★★★".slice(0, n) + "☆☆☆☆☆".slice(0, 5 - n); }
+
+  function reviewCard(r) {
+    var card = document.createElement("article"); card.className = "review";
+    var head = document.createElement("div"); head.className = "review-head";
+    var av;
+    if (r.avatar_url) { av = document.createElement("img"); av.src = r.avatar_url; av.alt = ""; av.loading = "lazy"; av.referrerPolicy = "no-referrer"; }
+    else { av = document.createElement("span"); av.className = "avatar"; av.textContent = (r.name || "P").charAt(0).toUpperCase(); }
+    var who = document.createElement("div");
+    var name = document.createElement("strong"); name.textContent = r.name;
+    var ver = document.createElement("span"); ver.className = "verified"; ver.textContent = "✓ Verified player";
+    who.append(name, ver); head.append(av, who);
+    var stars = document.createElement("div"); stars.className = "stars-row"; stars.textContent = starText(r.rating);
+    stars.setAttribute("aria-label", r.rating + " out of 5 stars");
+    var text = document.createElement("p"); text.textContent = r.text;
+    var when = document.createElement("time"); var d = new Date(r.date * 1000);
+    when.dateTime = d.toISOString(); when.textContent = d.toLocaleDateString(undefined, { month: "short", year: "numeric" });
+    card.append(head, stars, text, when);
+    return card;
+  }
+
+  function renderReviews() {
+    if (!allReviews.length) return;
+    revList.innerHTML = "";
+    allReviews.slice(0, revShown).forEach(function (r) { revList.append(reviewCard(r)); });
+    document.querySelector("[data-rev-more]").hidden = allReviews.length <= revShown;
+  }
+
+  function loadReviews() {
+    fetch(REVIEWS_URL).then(function (r) { return r.json(); }).then(function (data) {
+      allReviews = data.reviews || [];
+      if (data.count) {
+        document.querySelector("[data-rev-avg]").textContent = data.average.toFixed(1);
+        document.querySelector("[data-rev-stars]").textContent = starText(Math.round(data.average));
+        document.querySelector("[data-rev-total]").textContent = "from " + data.count + " verified player" + (data.count === 1 ? "" : "s");
+        document.querySelector("[data-rev-summary]").hidden = false;
+      }
+      renderReviews();
+    }).catch(function () {});
+  }
+
+  function renderReviewForm() {
+    var signedIn = !!getIdentity();
+    var canSign = SIGNIN_ON;
+    document.querySelector("[data-rev-out]").hidden = signedIn || !canSign;
+    document.querySelector("[data-rev-form]").hidden = !signedIn;
+    if (!canSign) document.querySelector("[data-rev-intro]").textContent = "Reviews open soon.";
+  }
+
+  document.querySelector("[data-rev-more]").addEventListener("click", function () { revShown += 6; renderReviews(); });
+  document.querySelector("[data-rev-signin]").addEventListener("click", function () { openChatAfterSignin = false; openSignin(); });
+  document.getElementById("rev-text").addEventListener("input", function () {
+    document.querySelector("[data-rev-chars]").textContent = this.value.length;
+  });
+  document.querySelector("[data-rev-form]").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var form = this, id = getIdentity();
+    var rating = form.querySelector("input[name=rating]:checked");
+    var text = form.text.value.trim();
+    revStatus.classList.remove("is-error");
+    if (!rating) { revStatus.textContent = "Tap the stars to pick a rating."; revStatus.classList.add("is-error"); return; }
+    if (text.length < 10) { revStatus.textContent = "Write a little more — at least 10 characters."; revStatus.classList.add("is-error"); return; }
+    if (!id) { renderReviewForm(); return; }
+    var btn = form.querySelector("button[type=submit]"); btn.disabled = true;
+    revStatus.textContent = "Posting…";
+    fetch(REVIEWS_URL, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ identifier: id.identifier, identifier_hash: id.identifier_hash, rating: +rating.value, text: text })
+    }).then(function (r) { return r.json().then(function (b) { return { ok: r.ok, status: r.status, body: b }; }); })
+      .then(function (res) {
+        btn.disabled = false;
+        if (res.ok) {
+          form.reset(); document.querySelector("[data-rev-chars]").textContent = "0";
+          revStatus.textContent = "Thanks! Your review will show here once our team checks it.";
+          return;
+        }
+        revStatus.classList.add("is-error");
+        if (res.status === 409 || res.status === 401) {
+          // Signed in before reviews existed (or the sign-in is stale): sign in once more.
+          store(false, ID_KEY, null); identityApplied = false; renderAccount(); renderReferral(); renderReviewForm();
+          revStatus.textContent = "Please sign in again with Google, then post your review.";
+          openSignin();
+          return;
+        }
+        revStatus.textContent = res.body.error || "Couldn't post your review. Please try again.";
+      })
+      .catch(function () { btn.disabled = false; revStatus.classList.add("is-error"); revStatus.textContent = "Couldn't post your review. Check your connection and try again."; });
+  });
+  loadReviews();
+  renderReviewForm();
 
   // ===== Promotions: claims + referrals =====
   // Claims don't pay anything automatically: they open the player's chat and tag it so the
