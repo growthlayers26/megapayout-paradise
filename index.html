@@ -342,7 +342,8 @@
     <div class="inapp" hidden>
       <p>Google sign-in doesn't work inside the Facebook or Instagram app. Tap <strong>•••</strong> and choose <strong>Open in browser</strong>, then sign in there.</p>
       <button class="btn btn-ghost btn-sm" type="button" data-copy-link>Copy link</button>
-      <p style="margin:12px 0 0"><button class="link-btn" type="button" data-skip-signin>Chat here without signing in</button><br><small style="color:var(--muted)">Your history will stay on this phone's Facebook browser only.</small></p>
+      <p style="margin:14px 0 8px">Or message us on Messenger instead:</p>
+      <a class="btn btn-primary btn-sm" data-messenger href="#" target="_blank" rel="noopener noreferrer">Message us on Messenger</a>
     </div>
     <div class="gsi-box" id="gsi-button"></div>
   </div>
@@ -632,7 +633,6 @@
   // the player stays signed in.
   var SIGNIN_ON = !!(CHAT_TOKEN && GOOGLE_CLIENT_ID);
   var ID_KEY = "mpp_chat_identity";
-  var SKIP_KEY = "mpp_chat_skip_signin";
   var signin = document.getElementById("signin");
   var signinMsg = signin.querySelector(".signin-msg");
   var openChatAfterSignin = false;
@@ -692,7 +692,9 @@
     });
   }
 
-  function needsSignin() { return SIGNIN_ON && !getIdentity() && !store(true, SKIP_KEY); }
+  // Every website chat comes from a Google-verified player, so each one is named by their
+  // Google account and nobody can pose as another player by typing their email.
+  function needsSignin() { return SIGNIN_ON && !getIdentity(); }
   function openChat() {
     if (needsSignin()) {
       openChatAfterSignin = true;
@@ -739,7 +741,6 @@
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (id) {
         store(false, ID_KEY, JSON.stringify(id));
-        store(false, SKIP_KEY, null);
         identityApplied = false;
         renderAccount();
         say("");
@@ -779,11 +780,11 @@
     say("You're signed out.");
     loadGoogle();
   });
-  signin.querySelector("[data-skip-signin]").addEventListener("click", function () {
-    store(false, SKIP_KEY, "1");
-    signin.close();
-    openChat();
+  signin.querySelectorAll("[data-messenger]").forEach(function (a) {
+    a.href = MESSAGE_URL;
+    a.addEventListener("click", function () { signin.close(); });
   });
+  store(false, "mpp_chat_skip_signin", null); // clear the old "chat without signing in" choice
   signin.querySelector("[data-copy-link]").addEventListener("click", function () {
     var btn = this;
     (navigator.clipboard ? navigator.clipboard.writeText(location.href) : Promise.reject())
