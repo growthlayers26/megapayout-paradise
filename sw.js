@@ -2,13 +2,13 @@
 // Pages: always try the network first (so players see the latest offers), fall back
 // to the last copy if they're offline. Site images/icons: serve the saved copy and
 // refresh it in the background. Chat, sign-in, payments and other sites are never touched.
-var CACHE = "mpp-v1";
+var CACHE = "mpp-v2";
 var PRECACHE = [
   "/",
   "/privacy.html",
   "/manifest.webmanifest",
   "/assets/logo.png",
-  "/assets/cover.jpg",
+  "/assets/hero.jpg",
   "/assets/icons/icon-192.png",
   "/assets/icons/icon-512.png"
 ];
