@@ -1,4 +1,4 @@
-// Mega Payout Paradise — service worker for the home-screen app.
+// Mega Payout Paradise: service worker for the home-screen app.
 // Pages: always try the network first (so players see the latest offers), fall back
 // to the last copy if they're offline. Site images/icons: serve the saved copy and
 // refresh it in the background. Chat, sign-in, payments and other sites are never touched.
