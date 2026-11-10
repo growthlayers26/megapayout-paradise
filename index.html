@@ -11,6 +11,13 @@
 <meta property="og:url" content="https://megapayoutparadise.online/">
 <link rel="canonical" href="https://megapayoutparadise.online/">
 <link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0a1013">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mega Payout">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
@@ -343,6 +350,27 @@
   .rev-count { color: var(--muted); font-size: 12px; text-align: right; margin: 0 0 12px; }
   .rev-status { min-height: 20px; margin: 10px 0 0; font-size: 14px; color: var(--muted); }
   .rev-status.is-error { color: #ff8a80; }
+
+  /* Install-the-app popup (phones only) */
+  .install {
+    position: fixed; left: 12px; right: 12px; bottom: calc(84px + env(safe-area-inset-bottom)); z-index: 40;
+    background: var(--surface-2); border: 1px solid rgba(227,176,75,.5); border-radius: 16px;
+    padding: 14px; box-shadow: 0 18px 40px rgba(0,0,0,.55);
+    transform: translateY(16px); opacity: 0; transition: transform .25s ease, opacity .25s ease;
+  }
+  .install.is-in { transform: none; opacity: 1; }
+  .install-row { display: flex; align-items: center; gap: 12px; }
+  .install-row img { width: 48px; height: 48px; border-radius: 12px; flex: none; }
+  .install-row strong { display: block; font: 600 15px/1.3 Poppins, sans-serif; }
+  .install-row small { display: block; color: var(--muted); font-size: 13px; line-height: 1.4; }
+  .install-x { margin-left: auto; align-self: flex-start; width: 30px; height: 30px; flex: none; border-radius: 50%; border: 1px solid var(--line); background: transparent; color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; }
+  .install-actions { display: flex; gap: 8px; margin-top: 12px; }
+  .install-actions .btn { flex: 1; }
+  .install-steps { margin: 12px 0 0; padding: 12px 12px 12px 30px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); font-size: 14px; color: var(--text); }
+  .install-steps li { margin: 2px 0; }
+  .install-steps b { color: var(--gold); }
+  .share-ico { display: inline-block; vertical-align: -3px; width: 16px; height: 16px; }
+  @media (prefers-reduced-motion: reduce) { .install { transition: none; } }
 
   /* Mobile sticky CTA */
   .mobile-cta { display: none; }
@@ -853,6 +881,26 @@
   </div>
 </footer>
 
+<div class="install" role="dialog" aria-labelledby="install-title" hidden>
+  <div class="install-row">
+    <img src="assets/icons/icon-192.png" alt="">
+    <div>
+      <strong id="install-title">Get the Mega Payout app</strong>
+      <small>Add it to your home screen — one tap to play, chat and claim bonuses.</small>
+    </div>
+    <button class="install-x" type="button" aria-label="Close" data-install-close>×</button>
+  </div>
+  <ol class="install-steps" data-install-steps hidden>
+    <li>Tap <b>Share</b> <svg class="share-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 15V3m0 0L8 7m4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg> at the bottom of Safari</li>
+    <li>Scroll down and tap <b>Add to Home Screen</b></li>
+    <li>Tap <b>Add</b> — done!</li>
+  </ol>
+  <div class="install-actions">
+    <button class="btn btn-ghost btn-sm" type="button" data-install-close>Not now</button>
+    <button class="btn btn-primary btn-sm" type="button" data-install-go>Install</button>
+  </div>
+</div>
+
 <div class="mobile-cta"><a class="btn btn-primary" data-message href="#">Message us to join</a></div>
 
 <script>
@@ -1076,6 +1124,61 @@
       .catch(function () { say("Copy this link: " + location.href); });
   });
   renderAccount();
+
+  // ===== Home-screen app (PWA) =====
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); });
+  }
+
+  // Install popup — phones only. Android Chrome: our button opens the phone's own install
+  // prompt. iPhone Safari: Apple doesn't allow that, so the button shows the two steps.
+  (function () {
+    var box = document.querySelector(".install");
+    var KEY = "mpp_install_dismissed";
+    var ua = navigator.userAgent || "";
+    var isPhone = /iPhone|iPod/.test(ua) || (/Android/.test(ua) && /Mobile/.test(ua));
+    var isIOSSafari = /iPhone|iPod/.test(ua) && /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS/.test(ua);
+    var installed = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+    var inApp = /(FBAN|FBAV|FB_IAB|FBIOS|Instagram|MicroMessenger|Snapchat)|Line\//i.test(ua);
+    var dismissedAt = +(store(true, KEY) || 0);
+    var recentlyDismissed = Date.now() - dismissedAt < 7 * 24 * 3600 * 1000;
+    var deferred = null, shown = false;
+
+    function canShow() { return isPhone && !installed && !inApp && !recentlyDismissed; }
+    function show() {
+      if (shown || !canShow()) return;
+      // Don't cover a panel the player is using; try again a bit later.
+      if (document.querySelector("dialog[open]") || (window.$chatwoot && window.$chatwoot.isOpen)) { setTimeout(show, 5000); return; }
+      shown = true; box.hidden = false;
+      requestAnimationFrame(function () { box.classList.add("is-in"); });
+    }
+    function hide(remember) {
+      box.classList.remove("is-in");
+      setTimeout(function () { box.hidden = true; }, 250);
+      if (remember) store(false, KEY, String(Date.now()));
+    }
+
+    window.addEventListener("beforeinstallprompt", function (e) {
+      e.preventDefault(); deferred = e;               // keep Chrome's prompt for our button
+      if (canShow()) setTimeout(show, 6000);
+    });
+    if (isIOSSafari && canShow()) setTimeout(show, 6000);
+
+    box.querySelectorAll("[data-install-close]").forEach(function (b) { b.addEventListener("click", function () { hide(true); }); });
+    box.querySelector("[data-install-go]").addEventListener("click", function () {
+      if (deferred) {
+        deferred.prompt();
+        deferred.userChoice.then(function (r) { deferred = null; hide(r.outcome !== "accepted"); });
+      } else {
+        box.querySelector("[data-install-steps]").hidden = false;
+        this.textContent = "Got it"; this.onclick = function () { hide(true); };
+      }
+    });
+    window.addEventListener("appinstalled", function () {
+      hide(false); store(false, KEY, String(Date.now()));
+      toast("Installed! Find Mega Payout on your home screen.");
+    });
+  })();
 
   // ===== Section highlighting (header links + phone section row) =====
   (function () {
