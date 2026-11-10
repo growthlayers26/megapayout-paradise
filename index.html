@@ -371,19 +371,6 @@
   .share-ico { display: inline-block; vertical-align: -3px; width: 16px; height: 16px; }
   @media (prefers-reduced-motion: reduce) { .install { transition: none; } }
 
-  /* Fresh from Paradise (Facebook posts) */
-  .posts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-  .post { display: block; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); background: var(--surface); transition: transform .2s, border-color .2s; }
-  .post:hover { transform: translateY(-3px); border-color: rgba(227,176,75,.5); }
-  .post img { display: block; width: 100%; height: auto; aspect-ratio: 720 / 894; object-fit: cover; }
-
-  /* Cashout policy graphic beside the written policies */
-  .policy-layout { display: grid; grid-template-columns: minmax(240px, 320px) 1fr; gap: 24px; align-items: start; }
-  .policy-art { margin: 0; border-radius: var(--radius); overflow: hidden; border: 1px solid rgba(227,176,75,.35); }
-  .policy-art img { display: block; width: 100%; height: auto; }
-  .policy-layout .policies { grid-template-columns: 1fr 1fr; }
-  .policy-layout .policy.feature { grid-column: 1 / -1; }
-
   /* Mobile sticky CTA */
   .mobile-cta { display: none; }
 
@@ -392,9 +379,6 @@
     .policies { grid-template-columns: 1fr; }
     .promo { grid-column: span 6; }
     .reviews { grid-template-columns: 1fr 1fr; }
-    .posts { grid-template-columns: repeat(2, 1fr); }
-    .policy-layout { grid-template-columns: 1fr; }
-    .policy-art { max-width: 360px; margin: 0 auto; order: 2; }
     .promo.wide { grid-template-columns: 1fr; }
     .foot-grid { grid-template-columns: 1fr 1fr; }
     .nav-links { display: none; }
@@ -423,10 +407,6 @@
     .foot-grid { grid-template-columns: 1fr; }
     .promo, .promo.wide { padding: 20px; }
     .reviews { grid-template-columns: 1fr; }
-    .posts { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; margin: 0 -16px 20px; padding: 0 16px 6px; scrollbar-width: none; }
-    .posts::-webkit-scrollbar { display: none; }
-    .post { flex: 0 0 72%; scroll-snap-align: start; }
-    .policy-layout .policies { grid-template-columns: 1fr; }
     .rev-form { padding: 20px; }
     .streak { gap: 4px; }
     .streak li { padding: 8px 0; }
@@ -787,24 +767,6 @@
     </div>
   </section>
 
-  <!-- Fresh from Paradise -->
-  <section id="paradise">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">Fresh from Paradise</p>
-        <h2>You bring the luck. We'll bring the paradise.</h2>
-        <p class="lead">Bonuses, game nights and weekend drops land on our Facebook page first. Follow along so you never miss one.</p>
-      </div>
-      <div class="posts">
-        <a class="post" data-facebook href="#" target="_blank" rel="noopener noreferrer"><img src="assets/posts/welcome.webp" alt="Welcome to Paradise — your tropical casino escape is open" width="720" height="894" loading="lazy"></a>
-        <a class="post" data-facebook href="#" target="_blank" rel="noopener noreferrer"><img src="assets/posts/bonus.webp" alt="Welcome Bonus — new players, message us to claim yours" width="720" height="894" loading="lazy"></a>
-        <a class="post" data-facebook href="#" target="_blank" rel="noopener noreferrer"><img src="assets/posts/playnow.webp" alt="Play Now — message us, get set up, start playing" width="720" height="894" loading="lazy"></a>
-        <a class="post" data-facebook href="#" target="_blank" rel="noopener noreferrer"><img src="assets/posts/weekend.webp" alt="It's the weekend — the reels are hot" width="720" height="894" loading="lazy"></a>
-      </div>
-      <a class="btn btn-ghost" data-facebook href="#" target="_blank" rel="noopener noreferrer">Follow us on Facebook →</a>
-    </div>
-  </section>
-
   <!-- Policies -->
   <section id="policies">
     <div class="wrap">
@@ -812,10 +774,6 @@
         <p class="eyebrow">Trust &amp; policies</p>
         <h2>Posted openly. No fine print.</h2>
       </div>
-      <div class="policy-layout">
-      <figure class="policy-art">
-        <img src="assets/cashout-policy.webp" alt="Mega Payout Paradise cashout policy: no minimum cashout, balance must be above your deposit, up to $500 within 24 hours, the rest after 24 hours, fast processing" width="720" height="964" loading="lazy">
-      </figure>
       <div class="policies">
         <div class="policy feature">
           <h3>Cashout policy</h3>
@@ -845,7 +803,6 @@
             <li>Claim in chat — our team adds every bonus by hand</li>
           </ul>
         </div>
-      </div>
       </div>
       <p class="policy-foot">These are the same terms posted on our Facebook page. No surprises at cashout.</p>
     </div>
